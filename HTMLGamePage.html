@@ -1,0 +1,68 @@
+﻿<html>
+
+    <head>
+        <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Knight vs Dragons Prototype</title>
+                <link rel="stylesheet" href="style.css">
+                </head>
+    <body>
+
+        <div id="mainMenu" style="display: flex; justify-content: center; align-items: center; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); color: white; font-family: Arial, sans-serif;">
+            <div style="text-align: center;">
+                <h1>Knight vs Dragons</h1>
+                <button id="freeplayButton" style="padding: 10px 20px; font-size: 16px; cursor: pointer; margin: 10px;">Freeplay</button>
+                <button id="storyButton" style="padding: 10px 20px; font-size: 16px; cursor: pointer; margin: 10px;">Play Story</button>
+                <button id="loadingButton" style="padding: 10px 20px; font-size: 16px; cursor: pointer; margin: 10px;">Load Level</button>
+            </div>
+        </div>
+
+        <!-- Loading Screen -->
+        <div id="loadingScreen" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); color: white; text-align: center; padding-top: 20%;">
+            <h1>Load Level</h1>
+            <div id="levelButtons">
+                <!-- Level buttons will be dynamically added here -->
+            </div>
+            <button id="resetButton" style="padding: 10px 20px; font-size: 16px; cursor: pointer; margin: 10px;">Reset Progress</button>
+            <button id="backButton" style="padding: 10px 20px; font-size: 16px; cursor: pointer; margin: 10px;">Back to Main Menu</button>
+        </div>
+
+        <div id="tutorial" style="display: none;">
+            <p>Welcome to Level 1: Tutorial!</p>
+            <p>Use <strong>A/D</strong> to move, <strong>W/S</strong> to aim, <strong>Space</strong> to jump, <strong>F</strong> to attack with the sword, and <strong>left-click</strong> to shoot.</p>
+            <p>Destroy the leaves and kill the dragon to complete the level.</p>
+        </div>
+
+        <div id="overlay" style="display: none;">
+            <h1 id="overlayMessage">Congrats!</h1>
+            <button id="nextLevelButton">Next Level</button>
+            <button id="playAgainButton" style="display: none;">Play Again</button>
+        </div>
+
+        <!--<div id="pauseMenu" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); color:white; text-align:center; padding-top:20%;">
+            <h1>PAUSED</h1>
+            <button onclick="togglePause()">Resume</button>
+            <button onclick="resetGame()">Restart</button>
+            <button onclick="showOptions()">Options</button>
+            <button onclick="exitToMenu()">Quit</button>
+        </div>-->
+
+        <div id="levelCompleteOverlay" style="display: none;">
+            <div id="levelCompleteContent">
+                <h1>Level Complete!</h1>
+                <p>Dragons Killed: <span id="finalDragonsKilled">0</span> / <span id="finalDragonsToKill">0</span></p>
+                <button id="nextLevelButton">Next Level</button>
+            </div>
+        </div>
+
+        <div id="dragonsKilledCounter">
+            Dragons Killed: <span id="dragonsKilledValue">0</span> / <span id="dragonsToKillValue">0</span>
+        </div>
+
+        <div id="game-container">
+            <canvas id="gameCanvas"></canvas>
+        </div>
+
+        <script src="script.js"></script>
+    </body>
+ </html>
