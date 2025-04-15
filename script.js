@@ -1,6 +1,4 @@
-﻿// ========================
 // SECTION 1: CANVAS SETUP
-
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 function resizeCanvas() {
@@ -9,33 +7,25 @@ function resizeCanvas() {
 }
 
 
-//Start Methods - two more methods at very bottom due to load order
+//Start Methods
 resizeCanvas();
-// 1000 interveral == 1 second
 setInterval(spawnZombie, 5000);
 window.addEventListener("resize", resizeCanvas);
-
-
-// ========================
 // SECTION 2: GAME VARIABLES
-// Add to SECTION 2: GAME VARIABLES
 
-// Add to SECTION 2: GAME VARIABLES
 let isFireBeamActive = false;
-// Replace the existing fireBeam object with:
 let fireBeam = {
     x: 0,
     minWidth: 20,
     maxWidth: 40,
     currentWidth: 0,
     startTime: 0,
-    chargeTime: 1000, // 1 second charging
-    activeTime: 2000, // 2 seconds active
+    chargeTime: 1000,
+    activeTime: 2000,
     expanding: true,
-    state: "inactive" // "charging", "active", "inactive"
+    state: "inactive" //charging
 };
 
-// Add to SECTION 2: GAME VARIABLES
 let powerUps = [];
 const POWERUP_TYPES = {
     AMMO: "ammo",
@@ -47,18 +37,18 @@ let isTimeStopped = false;
 let timeStopEnd = 0;
 let isPlayerSnared = false;
 let snareEndTime = 0;
-const SNARE_DURATION = 2000; // 2 seconds
-const FIREBALL_PARTICLES = 15; // Particles per fireball
-const SMOKE_PARTICLES = 8;     // Smoke particles per frame
+const SNARE_DURATION = 2000;
+const FIREBALL_PARTICLES = 15; 
+const SMOKE_PARTICLES = 8;
 
-let webProjectiles = []; // Array for spider webs
+let webProjectiles = []; 
 const WEB_SPEED = 3;
 const WEB_RADIUS = 8;
 //arrays
 let dragons = [];
-let spiders = []; // Only one spider can be kept in an array at one time
+let spiders = []; 
 let fireballs = [];
-let projectiles = []; // Array for storing projectiles
+let projectiles = []; 
 let blocks = [];
 //physics and rules
 let spiderSpawnInterval = 5000;
@@ -81,7 +71,7 @@ const levels = [
         dragonsToKill: 1,
         microBoss: null,
         description: "Welcome to Level 1: Tutorial!",
-        blockType: "leaf", // Leaf blocks
+        blockType: "leaf", 
     },
     {
         waves: 3,
@@ -89,7 +79,7 @@ const levels = [
         dragonsToKill: 6,
         microBoss: null,
         description: "Level 2: Defeat 3 waves of 2 dragons!",
-        blockType: "wood", // Wood blocks
+        blockType: "wood",
     },
     {
         waves: 3,
@@ -97,7 +87,7 @@ const levels = [
         dragonsToKill: 9,
         microBoss: null,
         description: "Level 3: Defeat 3 waves of 3 dragons and the mini dragon boss!",
-        blockType: "leaf", // Leaf blocks
+        blockType: "leaf",
     },
     // Level 4: Zombie introduction
     {
@@ -109,7 +99,7 @@ const levels = [
         enemyTypes: ["dragon", "zombie"]
     },
     
-    // Level 5: Fast-paced
+   
     {
         waves: 3,
         enemiesPerWave: 6,
@@ -120,7 +110,6 @@ const levels = [
         enemySpeed: 1.5
     },
     
-    // Level 6: Archery challenge
     {
         waves: 2,
         enemiesPerWave: 8,
@@ -131,7 +120,6 @@ const levels = [
         playerAmmo: 10
     },
     
-    // Level 7: Survival
     {
         waves: 4,
         enemiesPerWave: 5,
@@ -141,7 +129,6 @@ const levels = [
         enemyTypes: ["dragon", "spider", "zombie"]
     },
     
-    // Level 8: Mobile enemies
     {
         waves: 3,
         enemiesPerWave: 7,
@@ -152,7 +139,6 @@ const levels = [
         enemySpeed: 2.0
     },
     
-    // Level 9: Final challenge
     {
         waves: 5,
         enemiesPerWave: 6,
@@ -162,7 +148,6 @@ const levels = [
         enemyTypes: ["dragon", "spider", "zombie"]
     },
     
-    // Level 10: Victory lap
     {
         waves: 1,
         enemiesPerWave: 15,
@@ -176,19 +161,16 @@ const levels = [
 
 ];
 
-// ========================
 // SECTION 3: LOAD ASSETS (UPDATED)
 
-// Array to track loaded assets
+//track assets
 let assetsLoaded = 0;
-const totalAssets = 9; // Update this if you add more images
+const totalAssets = 9;
 
 function assetLoaded() {
     assetsLoaded++;
     if (assetsLoaded === totalAssets) {
-        // All assets loaded, hide loading screen
         document.getElementById("loadingScreen").style.display = "none";
-        // Initialize game
         setupEventListeners();
         gameLoop();
     }
@@ -224,7 +206,7 @@ bowImg.src = "Assets/bow.png";
 
 const swordImg = new Image();
 swordImg.onload = assetLoaded;
-swordImg.src = "Assets/arrow.png"; //temp using it
+swordImg.src = "Assets/arrow.png";
 
 const backgroundImg = new Image();
 backgroundImg.onload = assetLoaded;
@@ -233,9 +215,8 @@ backgroundImg.src = "Assets/Backgrounds/Tavern/Tavern.png";
 const backgroundBottomImg = new Image();
 backgroundBottomImg.onload = assetLoaded;
 backgroundBottomImg.src = "Assets/Backgrounds/Tavern/TavernBottom.png";
-// ========================
-// SECTION 4: CLASS CREATION
 
+// SECTION 4: CLASS CREATION
 class PowerUp {
     constructor(x, y, type) {
         this.x = x;
@@ -244,9 +225,9 @@ class PowerUp {
         this.height = 30;
         this.type = type;
         this.color = this.getColor();
-        this.lifetime = 10000; // 10 seconds
+        this.lifetime = 10000;
         this.spawnTime = Date.now();
-        this.velocityY = 0; // Add gravity
+        this.velocityY = 0;
         this.onGround = false;
     }
 
@@ -266,7 +247,7 @@ class PowerUp {
         ctx.arc(this.x, this.y, this.width / 2, 0, Math.PI * 2);
         ctx.fill();
 
-        // Draw icon based on type
+        // Draw type
         ctx.fillStyle = "black";
         ctx.font = "20px Arial";
         ctx.textAlign = "center";
@@ -291,7 +272,7 @@ class PowerUp {
     update() {
         // Apply gravity if not on ground
         if (!this.onGround) {
-            this.velocityY += gravity * 0.3; // Slower fall than player
+            this.velocityY += gravity * 0.3;
             this.y += this.velocityY;
 
             // Check floor collision
@@ -308,10 +289,10 @@ class PowerUp {
 }
 class Floor {
     constructor() {
-        this.y = canvas.height - 50; // Position at bottom of screen
-        this.height = 20; // Thickness of floor
+        this.y = canvas.height - 50;
+        this.height = 20;
         this.color = "#0040FF";
-        this.isVisible = true; // Toggle for visibility
+        this.isVisible = true;
     }
 
     draw() {
@@ -332,8 +313,8 @@ class Zombie {
     constructor(x, y, width = 40, height = 60) {
         this.x = x;
         this.y = y;
-        this.width = width; // Hitbox width
-        this.height = height; // Hitbox height
+        this.width = width;
+        this.height = height;
         this.spawnTime = Date.now();
         this.isActive = true;
     }
@@ -342,17 +323,17 @@ class Zombie {
         if (!this.isActive) return;
 
         // Draw the hitbox (for debugging, optional)
-        ctx.fillStyle = "rgba(0, 128, 0, 0.3)"; // Green hitbox
+        ctx.fillStyle = "rgba(0, 128, 0, 0.3)";
         ctx.fillRect(this.x, this.y, this.width, this.height);
 
         // Draw the zombie sprite over the hitbox
-        if (zombieImg.complete) { // Ensure the image is loaded
+        if (zombieImg.complete) { 
             ctx.drawImage(
-                zombieImg, // The zombie sprite
-                this.x - 0, // Adjust X position if needed
-                this.y - 5, // Adjust Y position if needed
-                this.width, // Render width
-                this.height // Render height
+                zombieImg,
+                this.x - 0,
+                this.y - 5,
+                this.width,
+                this.height
             );
         } else {
             console.error("Zombie sprite not loaded!");
@@ -362,7 +343,7 @@ class Zombie {
     update(player) {
         if (!this.isActive) return;
 
-        // Check if the zombie has been alive for more than 5 seconds
+        // Check if the zombiealive > 5 secs
         if (Date.now() - this.spawnTime > 5000) {
             this.isActive = false;
             this.respawn(player);
@@ -396,10 +377,10 @@ class Zombie {
         setTimeout(() => {
             let x, y;
 
-            // Ensure the zombie spawns at a safe distance from the player
+            //zombie spawn safe distance from the player
             do {
                 x = Math.random() * (canvas.width - this.width);
-                y = canvas.height - 60; // Spawn at the bottom of the screen
+                y = canvas.height - 60;
             } while (Math.abs(x - player.x) < 100);
 
             this.x = x;
@@ -420,39 +401,39 @@ class Tree {
     getThickness() {
         switch (this.type) {
             case "Oak":
-                return 30; // Thicker leaves
+                return 30; 
             case "Pine":
-                return 20; // Thinner leaves
+                return 20;
             case "Maple":
-                return 25; // Medium thickness
+                return 25; 
             default:
-                return 20; // Default thickness
+                return 20;
         }
     }
 
     getNodeDistance() {
         switch (this.type) {
             case "Oak":
-                return 40; // Wider gaps
+                return 40;
             case "Pine":
-                return 30; // Narrower gaps
+                return 30;
             case "Maple":
-                return 35; // Medium gaps
+                return 35; 
             default:
-                return 30; // Default gaps
+                return 30;
         }
     }
 
     getHeight() {
         switch (this.type) {
             case "Oak":
-                return 100; // Taller tree
+                return 100;
             case "Pine":
-                return 120; // Taller and narrower
+                return 120;
             case "Maple":
-                return 80; // Shorter tree
+                return 80;
             default:
-                return 100; // Default height
+                return 100;
         }
     }
 }
@@ -464,36 +445,36 @@ class LeafBlock {
         this.width = width;
         this.height = height;
         this.type = type;
-        this.health = this.getHealth(); // Set health based on type
+        this.health = this.getHealth();
         this.isDestroyed = false;
     }
 
     getHealth() {
         switch (this.type) {
             case "leaf":
-                return 1; // Breaks in one hit
+                return 1;
             case "wood":
-                return 3; // Takes 3 hits to break
+                return 3;
             case "stone":
-                return Infinity; // Cannot be broken
+                return Infinity;
             default:
-                return 1; // Default to leaf
+                return 1;
         }
     }
 
     draw() {
-        if (this.isDestroyed) return; // Don't draw if destroyed
+        if (this.isDestroyed) return;
 
         // Set color based on type
         switch (this.type) {
             case "leaf":
-                ctx.fillStyle = "green"; // Green for leaf
+                ctx.fillStyle = "green";
                 break;
             case "wood":
-                ctx.fillStyle = "brown"; // Brown for wood
+                ctx.fillStyle = "brown";
                 break;
             case "stone":
-                ctx.fillStyle = "gray"; // Gray for stone
+                ctx.fillStyle = "gray";
                 break;
         }
 
@@ -501,17 +482,15 @@ class LeafBlock {
     }
 
     takeDamage() {
-        if (this.type === "stone") return; // Stone blocks cannot be broken
+        if (this.type === "stone") return;
 
         this.health--;
         if (this.health <= 0) {
             this.isDestroyed = true;
-            // Add destruction animation here (e.g., particles)
         }
     }
 }
 
-// ========================
 // UPDATE FIREBALL CLASS/OBJECT (modify your existing fireball structure)
 class Fireball {
     constructor(x, y, speedX, speedY) {
@@ -522,7 +501,7 @@ class Fireball {
         this.particles = [];
         this.size = 20;
 
-        // Create initial particles
+        // Create particles
         for (let i = 0; i < FIREBALL_PARTICLES; i++) {
             this.particles.push({
                 x: this.x,
@@ -597,9 +576,9 @@ class Fireball {
 class Player {
     constructor() {
         this.x = canvas.width / 2 - 25;
-        this.y = floor.y - this.height; // Spawn just above floor
-        this.width = 80; // Increased from 50 to 100 (2x)
-        this.height = 50; // Increased from 30 to 60 (2x)
+        this.y = floor.y - this.height;
+        this.width = 80; 
+        this.height = 50;
         this.arrowAngle = -Math.PI / 4;
         this.health = 3;
         this.isSwordAttacking = false;
@@ -608,13 +587,12 @@ class Player {
         this.isJumping = false;
         this.isGrabbed = false;
 
-        this.maxAmmo = 3; // Maximum arrows
-        this.ammo = this.maxAmmo; // Current arrows
-        this.ammoCooldown = 5000; // 5-second cooldown per arrow
-        this.isReloading = false; // Whether the player is reloading
-        this.reloadInterval = null; // Interval for reloading
-        // In the Player class constructor:
-        this.defaultMaxAmmo = 3; // Store original value
+        this.maxAmmo = 3;
+        this.ammo = this.maxAmmo;
+        this.ammoCooldown = 5000;
+        this.isReloading = false;
+        this.reloadInterval = null;
+        this.defaultMaxAmmo = 3;
 
     }
 
@@ -624,10 +602,10 @@ class Player {
         this.isReloading = true;
         this.reloadInterval = setInterval(() => {
             if (this.ammo < this.maxAmmo) {
-                this.ammo++; // Replenish 1 arrow
-                this.isReloading = false; // Allow shooting as soon as 1 arrow is replenished
+                this.ammo++;
+                this.isReloading = false; 
             } else {
-                clearInterval(this.reloadInterval); // Stop reloading when full
+                clearInterval(this.reloadInterval);
                 this.isReloading = false;
             }
         }, this.ammoCooldown);
@@ -636,11 +614,11 @@ class Player {
     drawAmmo() {
         ctx.fillStyle = "black";
         ctx.font = "20px Arial";
-        ctx.fillText(`Arrows: ${this.ammo}`, canvas.width - 150, 60); // Adjusted y position to 60
+        ctx.fillText(`Arrows: ${this.ammo}`, canvas.width - 150, 60);
     }
 
     update() {
-        if (!isPlayerSnared) { // Only apply gravity if not snared
+        if (!isPlayerSnared) {
             this.y += this.velocityY;
             this.velocityY += gravity;
         }
@@ -656,7 +634,7 @@ class Player {
     }
 
     jump() {
-        if (isPlayerSnared) return; // Don't jump if snared
+        if (isPlayerSnared) return;
         if (!this.isJumping) {
             this.velocityY = -this.jumpPower;
             this.isJumping = true;
@@ -690,7 +668,7 @@ class Player {
             );
             ctx.fill();
 
-            // Draw remaining snare time
+            // snare time
             const timeLeft = ((snareEndTime - Date.now()) / 1000).toFixed(1);
             ctx.globalAlpha = 1;
             ctx.fillStyle = "black";
@@ -709,14 +687,14 @@ class Player {
     }
 
     moveLeft() {
-        if (isPlayerSnared) return; // Don't move if snared
+        if (isPlayerSnared) return; 
         if (this.x > 0) {
             this.x -= 10;
         }
     }
 
     moveRight() {
-        if (isPlayerSnared) return; // Don't move if snared
+        if (isPlayerSnared) return;
         if (this.x < canvas.width - this.width) {
             this.x += 10;
         }
@@ -740,10 +718,10 @@ class Player {
                 x: this.x + this.width / 2,
                 y: this.y + this.height / 2,
                 speedX: speed * angleX,
-                speedY: speed * angleY * 1.1, // Reduce vertical speed
+                speedY: speed * angleY * 1.1,
             });
 
-            this.ammo--; // Decrease ammo
+            this.ammo--;
             if (this.ammo === 0) {
                 this.startReload();
             }
@@ -755,7 +733,7 @@ class Player {
             this.isSwordAttacking = true;
             setTimeout(() => {
                 this.isSwordAttacking = false;
-            }, 300); // Sword attack duration
+            }, 300);
         }
     }
 
@@ -766,27 +744,22 @@ class Player {
         }
     }
 
-    // Add a reset method to the Player class:
+   
     reset() {
         this.health = 3;
         this.maxAmmo = this.defaultMaxAmmo;
         this.ammo = this.maxAmmo;
         this.x = canvas.width / 2 - this.width / 2;
-        this.y = floor.y - this.height; // Explicit floor alignment
+        this.y = floor.y - this.height;
         this.velocityY = 0;
         this.isJumping = false;
     }
 
 }
-
-// Instantiate player
 const player = new Player();
 
-// ========================
 // SECTION 5: GAME FUNCTIONS
 
-
-//Hit box and rendering
 function drawLeafBlocks() {
     leafBlocks.forEach((block) => block.draw());
 }
@@ -799,8 +772,6 @@ function drawWebProjectiles() {
         ctx.beginPath();
         ctx.arc(web.x, web.y, web.radius, 0, Math.PI * 2);
         ctx.fill();
-
-        // Optional: Add web-like lines
         ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
         ctx.lineWidth = 1;
         for (let j = 0; j < 3; j++) {
@@ -816,15 +787,12 @@ function drawWebProjectiles() {
     });
     ctx.restore();
 }
-
-// In drawDragons(), modify to show hover state:
 function drawDragons() {
     dragons.forEach((dragon) => {
         ctx.fillStyle = dragon.isHovering ? "rgba(255, 200, 0, 0.3)" : "rgba(0, 255, 0, 0.3)";
         ctx.fillRect(dragon.x, dragon.y, dragon.width, dragon.height);
         ctx.drawImage(dragonImg, dragon.x, dragon.y, dragon.width, dragon.height);
 
-        // Draw hover indicator
         if (dragon.isHovering) {
             ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
             ctx.beginPath();
@@ -837,8 +805,7 @@ function drawDragons() {
 
 function drawSpiders() {
     spiders.forEach((spider) => {
-        // Draw the hitbox (for debugging, optional)
-        ctx.fillStyle = "rgba(128, 0, 128, 0.3)"; // Transparent purple
+        ctx.fillStyle = "rgba(128, 0, 128, 0.3)";
         ctx.fillRect(spider.x, spider.y, spider.width, spider.height);
         ctx.drawImage(spiderImg, spider.x - 0, spider.y - 5, 80, 80);
 
@@ -848,7 +815,7 @@ function drawSpiders() {
 
 function drawFireballs() {
     fireballs.forEach((fireball) => {
-        ctx.fillStyle = "rgba(255, 165, 0, 0.3)"; // Transparent orange
+        ctx.fillStyle = "rgba(255, 165, 0, 0.3)";
         ctx.beginPath();
         ctx.arc(fireball.x, fireball.y, 8, 0, Math.PI * 2);
         ctx.fill();
@@ -858,7 +825,7 @@ function drawFireballs() {
 
 function drawProjectiles() {
     projectiles.forEach((projectile) => {
-        ctx.fillStyle = "rgba(255, 255, 0, 0.3)"; // Transparent yellow
+        ctx.fillStyle = "rgba(255, 255, 0, 0.3)";
         ctx.beginPath();
         ctx.arc(projectile.x, projectile.y, 5, 0, Math.PI * 2);
         ctx.fill();
@@ -915,8 +882,6 @@ function drawSword() {
         ctx.restore();
     }
 }
-
-// Updates
 function updateFireballs() {
     for (let i = fireballs.length - 1; i >= 0; i--) {
         const fireball = fireballs[i];
@@ -924,15 +889,13 @@ function updateFireballs() {
         if (!isTimeStopped) {
             fireball.x += fireball.speedX || 0;
             fireball.y += fireball.speedY;
-
-            // Remove if out of bounds
+            
             if (fireball.y > canvas.height - 50) {
                 fireballs.splice(i, 1);
                 continue;
             }
         }
 
-        // Collision detection still works during time stop
         if (checkFireballPlayerCollision(fireball)) {
             fireballs.splice(i, 1);
         }
@@ -968,20 +931,18 @@ function updateProjectiles() {
 function updateDragons() {
     dragons.forEach((dragon) => {
         if (!isTimeStopped) {
-            // Check if dragon should enter hover mode (50% chance when over player)
             if (!dragon.isHovering && 
                 Math.random() < 0.005 && 
                 dragon.x + dragon.width/2 > player.x - 100 && 
                 dragon.x + dragon.width/2 < player.x + player.width + 100) {
                 
                 dragon.isHovering = true;
-                dragon.hoverEndTime = Date.now() + 4000; // Hover for 4 seconds
+                dragon.hoverEndTime = Date.now() + 4000;
                 dragon.originalSpeed = dragon.speed;
                 dragon.speed = 0;
-                dragon.hasFiredBeam = false; // Reset beam flag
+                dragon.hasFiredBeam = false;
             }
             
-            // During hover, check if should fire beam (50% chance, only once)
             if (dragon.isHovering && !dragon.hasFiredBeam && Math.random() < 0.02) {
                 if (!isFireBeamActive) {
                     activateFireBeam(dragon.x + dragon.width/2);
@@ -989,13 +950,11 @@ function updateDragons() {
                 }
             }
             
-            // Check if hover time is over
             if (dragon.isHovering && Date.now() > dragon.hoverEndTime) {
                 dragon.isHovering = false;
                 dragon.speed = dragon.originalSpeed;
             }
             
-            // Move if not hovering
             if (!dragon.isHovering) {
                 dragon.x += dragon.speed;
                 if (dragon.x > canvas.width) {
@@ -1004,7 +963,6 @@ function updateDragons() {
             }
         }
         
-        // Regular fireball shooting (when not time stopped and not hovering)
         if (!isTimeStopped && !dragon.isHovering && Math.random() < 0.005) {
             spawnFireball(dragon);
         }
@@ -1018,13 +976,11 @@ function activateFireBeam(xPosition) {
     fireBeam.currentWidth = fireBeam.minWidth;
     fireBeam.expanding = true;
 
-    // Start charging phase
     setTimeout(() => {
         if (fireBeam.state === "charging") {
             fireBeam.state = "active";
             fireBeam.startTime = Date.now();
 
-            // Animate the beam
             const beamAnimation = setInterval(() => {
                 if (fireBeam.expanding) {
                     fireBeam.currentWidth += 2;
@@ -1039,7 +995,6 @@ function activateFireBeam(xPosition) {
                 }
             }, 30);
 
-            // Deactivate after duration
             setTimeout(() => {
                 clearInterval(beamAnimation);
                 fireBeam.state = "inactive";
@@ -1052,17 +1007,14 @@ function updateWebProjectiles() {
     for (let i = webProjectiles.length - 1; i >= 0; i--) {
         const web = webProjectiles[i];
 
-        // Update position
         web.x += web.speedX;
-        web.alpha -= 0.01; // Gradually fade out
+        web.alpha -= 0.01;
 
-        // Check collision with player (no damage)
         if (checkWebHitPlayer(web)) {
             webProjectiles.splice(i, 1);
             continue;
         }
 
-        // Remove if off-screen or fully faded
         if (web.x < -50 || web.x > canvas.width + 50 || web.alpha <= 0) {
             webProjectiles.splice(i, 1);
         }
@@ -1082,9 +1034,8 @@ function checkWebHitPlayer(web) {
     if (collided) {
         isPlayerSnared = true;
         snareEndTime = Date.now() + SNARE_DURATION;
-        player.velocityY = 0; // Stop any vertical movement
+        player.velocityY = 0;
 
-        // Visual effect
         createWebSnareEffect(player.x + player.width / 2, player.y + player.height / 2);
         return true;
     }
@@ -1093,7 +1044,6 @@ function checkWebHitPlayer(web) {
 
 function updateSnare() {
     if (isPlayerSnared) {
-        // Completely stop player movement while snared
         player.velocityY = 0;
 
         if (Date.now() > snareEndTime) {
@@ -1102,7 +1052,6 @@ function updateSnare() {
     }
 }
 function createWebSnareEffect(x, y) {
-    // Create web particles around player
     for (let i = 0; i < 15; i++) {
         setTimeout(() => {
             ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.5 + 0.3})`;
@@ -1120,27 +1069,23 @@ function createWebSnareEffect(x, y) {
 }
 function drawFireBeam() {
     if (fireBeam.state === "inactive") return;
-
-    // Calculate active progress for the entire function
+    
     const activeProgress = fireBeam.state === "charging"
         ? (Date.now() - fireBeam.startTime) / fireBeam.chargeTime
         : (Date.now() - fireBeam.startTime) / fireBeam.activeTime;
 
-    // ===== SCREEN SHAKE EFFECT =====
     let shakeX = 10;
     let shakeY = 25;
 
     if (fireBeam.state === "active" && activeProgress < 0.1) {
-        const shakeIntensity = 1 - (activeProgress / 0.1); // Easing out
+        const shakeIntensity = 1 - (activeProgress / 0.1); 
         shakeX = (Math.random() - 0.5) * 10 * shakeIntensity;
         shakeY = (Math.random() - 0.5) * 5 * shakeIntensity;
     }
 
-    // Save the canvas state before applying transformations
     ctx.save();
     ctx.translate(shakeX, shakeY);
 
-    // ===== CHARGING PHASE VISUALS =====
     if (fireBeam.state === "charging") {
         // 1. Pulsating warning zone
         const pulseIntensity = 0.3 + 0.3 * Math.sin(activeProgress * 20);
@@ -1171,7 +1116,6 @@ function drawFireBeam() {
         return;
     }
 
-    // ===== ACTIVE PHASE VISUALS =====
     const alpha = 0.4 + 0.6 * (1 - activeProgress);
 
     // 1. Main beam with gradient
@@ -1207,11 +1151,9 @@ function drawFireBeam() {
         ctx.fillRect(fireBeam.x - 5, 0, fireBeam.currentWidth + 10, canvas.height);
     }
 
-    // Restore the canvas state after all drawing is complete
     ctx.restore();
 }
 function checkFireBeamCollision() {
-    // Only check collision when beam is active
     return fireBeam.state === "active" &&
         player.x + player.width > fireBeam.x &&
         player.x < fireBeam.x + fireBeam.currentWidth;
@@ -1222,18 +1164,16 @@ function updateSpiders() {
     spiders.forEach((spider) => {
         if (!isTimeStopped) {
             if (currentTime >= spider.nextShotTime) {
-                // Shoot web projectile instead of fireball
                 let webSpeedX = spider.initialSide === "left" ? 5 : -5;
                 webProjectiles.push({
                     x: spider.x + spider.width / 2,
                     y: spider.y + spider.height / 2,
                     speedX: webSpeedX,
                     speedY: 0,
-                    radius: 8,  // Size of the web projectile
-                    alpha: 0.9  // Initial transparency
+                    radius: 8,
+                    alpha: 0.9
                 });
 
-                // Existing spider teleport logic
                 if (spider.initialSide === "left") {
                     spider.x = canvas.width + 60;
                     spider.initialSide = "right";
@@ -1243,13 +1183,13 @@ function updateSpiders() {
                 }
 
                 spider.shootCount = (spider.shootCount || 0) + 1;
-                spider.nextShotTime = currentTime + 1500; // 1.5-second delay between shots
+                spider.nextShotTime = currentTime + 1500;
 
                 if (spider.shootCount >= 3) {
                     spider.isMoving = true;
                     spider.initialSide = Math.random() < 0.5 ? "left" : "right";
                     spider.speed = spider.initialSide === "left" ? 0.3 : -0.3;
-                    spider.y = 560; // Set Y position to 560 for moving mode
+                    spider.y = 560;
                 }
             }
         } else {
@@ -1266,9 +1206,7 @@ function updateSpiders() {
 }
 
 function updateZombies(player) {
-    if (!zombie) return; // No zombie to update
-
-    // Check for player collision
+    if (!zombie) return;
     const playerLeft = player.x;
     const playerRight = player.x + player.width;
     const playerTop = player.y;
@@ -1285,14 +1223,12 @@ function updateZombies(player) {
         playerBottom > zombieTop &&
         playerTop < zombieBottom
     ) {
-        player.takeDamage(); // Hurt the player
-        zombie = null; // Remove the zombie
+        player.takeDamage();
+        zombie = null;
     }
 }
 
-// Check collisions
 function checkCollisions() {
-    // Check collisions between projectiles and dragons
     projectiles.forEach((projectile, pIndex) => {
         dragons.forEach((dragon, dIndex) => {
             if (
@@ -1301,11 +1237,11 @@ function checkCollisions() {
                 projectile.y > dragon.y &&
                 projectile.y < dragon.y + dragon.height
             ) {
-                console.log("Arrow hit dragon!"); // Debug log
-                projectiles.splice(pIndex, 1); // Remove the projectile
+                console.log("Arrow hit dragon!");
+                projectiles.splice(pIndex, 1);
                 const deadDragon = dragons.splice(dIndex, 1)[0];
-                dragonsKilled++; // Increment dragons killed
-                updateDragonsKilledCounter(); // Update the counter
+                dragonsKilled++;
+                updateDragonsKilledCounter();
 
                 if (Math.random() < 1) {
                     const types = Object.values(POWERUP_TYPES);
@@ -1316,14 +1252,12 @@ function checkCollisions() {
                         randomType
                     ));
                 }
-                // Check if all dragons are defeated
                 if (dragonsKilled >= levels[currentLevel].dragonsToKill) {
-                    endGame(true); // Level completed
+                    endGame(true);
                 }
             }
         });
 
-        // Check collisions between projectiles and spiders
         spiders.forEach((spider, sIndex) => {
             if (
                 projectile.x > spider.x &&
@@ -1331,13 +1265,12 @@ function checkCollisions() {
                 projectile.y > spider.y &&
                 projectile.y < spider.y + spider.height
             ) {
-                console.log("Arrow hit spider!"); // Debug log
-                projectiles.splice(pIndex, 1); // Remove the projectile
-                spiders.splice(sIndex, 1); // Remove the spider
+                console.log("Arrow hit spider!");
+                projectiles.splice(pIndex, 1);
+                spiders.splice(sIndex, 1);
             }
         });
 
-        // Check collisions between projectiles and fireballs
         fireballs.forEach((fireball, fIndex) => {
             if (
                 projectile.x > fireball.x - 8 &&
@@ -1345,13 +1278,12 @@ function checkCollisions() {
                 projectile.y > fireball.y - 8 &&
                 projectile.y < fireball.y + 8
             ) {
-                console.log("Arrow hit fireball!"); // Debug log
-                projectiles.splice(pIndex, 1); // Remove the projectile
-                fireballs.splice(fIndex, 1); // Remove the fireball
+                console.log("Arrow hit fireball!"); 
+                projectiles.splice(pIndex, 1);
+                fireballs.splice(fIndex, 1);
             }
         });
 
-        // Check collisions between projectiles and leaf blocks
         leafBlocks.forEach((block, bIndex) => {
             if (
                 !block.isDestroyed &&
@@ -1360,14 +1292,13 @@ function checkCollisions() {
                 projectile.y > block.y &&
                 projectile.y < block.y + block.height
             ) {
-                console.log("Arrow hit leaf block!"); // Debug log
-                block.takeDamage(); // Damage the block
-                projectiles.splice(pIndex, 1); // Remove the projectile
+                console.log("Arrow hit leaf block!");
+                block.takeDamage();
+                projectiles.splice(pIndex, 1);
             }
         });
     });
 
-    // Check collisions between fireballs and leaf blocks
     fireballs.forEach((fireball, fIndex) => {
         leafBlocks.forEach((block, bIndex) => {
             if (
@@ -1377,14 +1308,13 @@ function checkCollisions() {
                 fireball.y > block.y &&
                 fireball.y < block.y + block.height
             ) {
-                console.log("Fireball hit leaf block!"); // Debug log
-                block.takeDamage(); // Damage the block
-                fireballs.splice(fIndex, 1); // Remove the fireball
+                console.log("Fireball hit leaf block!");
+                block.takeDamage();
+                fireballs.splice(fIndex, 1);
             }
         });
     });
 
-    // Check collisions between fireballs and player
     fireballs.forEach((fireball, fIndex) => {
         if (
             fireball.x > player.x &&
@@ -1392,9 +1322,9 @@ function checkCollisions() {
             fireball.y > player.y &&
             fireball.y < player.y + player.height
         ) {
-            console.log("Fireball hit player!"); // Debug log
-            player.takeDamage(); // Damage the player
-            fireballs.splice(fIndex, 1); // Remove the fireball
+            console.log("Fireball hit player!");
+            player.takeDamage(); 
+            fireballs.splice(fIndex, 1);
         }
     });
 
@@ -1425,8 +1355,8 @@ function checkCollisions() {
                 spider.y < swordY + swordHeight &&
                 spider.y + spider.height > swordY
             ) {
-                console.log("Sword hit spider!"); // Debug log
-                spiders.splice(i, 1); // Remove the spider
+                console.log("Sword hit spider!");
+                spiders.splice(i, 1);
             }
         }
 
@@ -1439,13 +1369,12 @@ function checkCollisions() {
                 swordY < block.y + block.height &&
                 swordY + swordHeight > block.y
             ) {
-                console.log("Sword hit leaf block!"); // Debug log
-                block.takeDamage(); // Damage the block
+                console.log("Sword hit leaf block!");
+                block.takeDamage();
             }
         });
     }
 
-    // Check collisions between player and spiders
     for (let i = spiders.length - 1; i >= 0; i--) {
         const spider = spiders[i];
         if (
@@ -1454,9 +1383,9 @@ function checkCollisions() {
             player.y < spider.y + spider.height &&
             player.y + player.height > spider.y
         ) {
-            console.log("Spider hit player!"); // Debug log
-            player.takeDamage(); // Damage the player
-            spiders.splice(i, 1); // Remove the spider
+            console.log("Spider hit player!");
+            player.takeDamage();
+            spiders.splice(i, 1);
         }
     }
 }
@@ -1471,7 +1400,7 @@ function spawnMicroBoss() {
             height: 100,
             speed: 0.2,
             health: 10,
-            isMicroBoss: true, // Mark as micro-boss
+            isMicroBoss: true,
         });
     } else if (microBossType === "spider") {
         spiders.push({
@@ -1481,26 +1410,22 @@ function spawnMicroBoss() {
             height: 80,
             speed: 0.5,
             health: 5,
-            isMicroBoss: true, // Mark as micro-boss
+            isMicroBoss: true,
         });
     }
 }
 
-//Draw Leaf Blocks
 function drawLeafBlocks() {
     leafBlocks.forEach((block) => block.draw());
 }
 
-//Draw Zombies
 function drawZombies() {
     if (zombie) {
         zombie.draw();
     }
 }
 
-// Draw background
 function drawBackground() {
-    // Draw the background image
     if (backgroundImg.complete) {
         ctx.drawImage(backgroundImg, -27, 0, canvas.width, canvas.height);
     }
@@ -1511,14 +1436,13 @@ function drawBackground() {
 
 }
 
-// Game loop
 function gameLoop() {
     if (isGameOver) return;
 
-    console.log("Game loop running"); // Debug log
+    console.log("Game loop running");
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    // DEBUG: Draw spawn point
+    // debug
     ctx.fillStyle = "rgba(0,255,0,0.3)";
     ctx.fillRect(
         canvas.width / 2 - player.width / 2,
@@ -1546,20 +1470,17 @@ function gameLoop() {
     }
     fireballs.forEach(fb => fb.draw(ctx));
     drawProjectiles();
-    // In gameLoop(), add these near the other draw/update calls:
     drawPowerUps();
     if (!isTimeStopped) {
         updatePowerUps();
     }
 
-    
-    // In gameLoop(), where you draw the time stop effect:
     if (isTimeStopped) {
         ctx.save();
         ctx.fillStyle = "rgba(100, 200, 255, 0.2)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Make enemies blue-ish during time stop
+        // blueish time stop
         ctx.globalCompositeOperation = "multiply";
         dragons.forEach(dragon => {
             ctx.fillStyle = "rgba(0, 100, 255, 0.5)";
@@ -1578,7 +1499,6 @@ function gameLoop() {
         ctx.fillText(`TIME STOP: ${timeLeft}s`, canvas.width / 2, 50);
     }
 
-    // In gameLoop(), modify the fire beam section:
     if (fireBeam.state === "charging") {
         // Draw warning area
         ctx.fillStyle = "rgba(255, 150, 0, 0.2)";
@@ -1612,45 +1532,41 @@ function gameLoop() {
 let leafBlocks = [];
 
 function spawnLeafBlocks() {
-    const tree = new Tree("Oak"); // Example: Spawn an Oak tree
-    const middleRowY = canvas.height / 2 - 10; // Middle of the screen
-    const blockWidth = tree.thickness; // Use tree thickness for block width
-    const blockHeight = 20; // Fixed height for simplicity
-    const minGap = tree.nodeDistance; // Use tree node distance for gaps
-    const maxGap = tree.nodeDistance + 20; // Add some variation
-    const yVariation = tree.height / 2; // Use tree height for vertical spread
+    const tree = new Tree("Oak");
+    const middleRowY = canvas.height / 2 - 10;
+    const blockWidth = tree.thickness;
+    const blockHeight = 20;
+    const minGap = tree.nodeDistance;
+    const maxGap = tree.nodeDistance + 20;
+    const yVariation = tree.height / 2;
 
-    const clearingWidth = 100; // Width of the clearings on the left and right
-    let x = clearingWidth; // Start from the left edge of the spawning area
+    const clearingWidth = 100;
+    let x = clearingWidth;
 
-    const totalColumns = 10; // Decrease the number of columns
+    const totalColumns = 10;
 
     for (let col = 0; col < totalColumns; col++) {
-        // Add a random gap between columns
         const gap = Math.random() * (maxGap - minGap) + minGap;
         x += gap;
 
-        // Spawn a column if it fits within the spawning area
         if (x + blockWidth <= canvas.width - clearingWidth) {
-            const y = middleRowY + (Math.random() * yVariation - yVariation / 2); // Randomize Y position
-            const numLeaves = Math.floor(Math.random() * 6) + 3; // Random number of leaves (3-8)
-
-            // Spawn leaf blocks in a circular pattern around the center node
+            const y = middleRowY + (Math.random() * yVariation - yVariation / 2);
+            const numLeaves = Math.floor(Math.random() * 6) + 3;
+            
             for (let i = 0; i < numLeaves; i++) {
-                const angle = (Math.PI * 2 * i) / numLeaves; // Evenly distribute leaves in a circle
-                const radius = 40; // Increase radius for a bushier look
+                const angle = (Math.PI * 2 * i) / numLeaves;
+                const radius = 40;
                 const leafX = x + Math.cos(angle) * radius;
                 const leafY = y + Math.sin(angle) * radius;
 
                 leafBlocks.push(new LeafBlock(leafX, leafY, blockWidth, blockHeight, "leaf"));
             }
 
-            x += blockWidth; // Move to the end of the current column
+            x += blockWidth;
         }
     }
 }
 
-// Add to SECTION 5: GAME FUNCTIONS
 function drawPowerUps() {
     powerUps.forEach(pu => pu.draw());
 }
@@ -1659,13 +1575,11 @@ function updatePowerUps() {
     for (let i = powerUps.length - 1; i >= 0; i--) {
         const powerUp = powerUps[i];
 
-        // Always update powerups (so they can be collected during time stop)
         if (powerUp.update()) {
             powerUps.splice(i, 1);
             continue;
         }
 
-        // Check collection
         if (checkPowerUpCollection(powerUp)) {
             applyPowerUp(powerUp);
             powerUps.splice(i, 1);
@@ -1685,21 +1599,21 @@ function checkPowerUpCollection(powerUp) {
 function applyPowerUp(powerUp) {
     switch (powerUp.type) {
         case POWERUP_TYPES.AMMO:
-            player.maxAmmo = 10; // Increase max ammo
-            player.ammo = player.maxAmmo; // Refill ammo
+            player.maxAmmo = 10;
+            player.ammo = player.maxAmmo;
             break;
 
         case POWERUP_TYPES.HEALTH:
-            player.health = Math.min(player.health + 1, 3); // Heal 1 HP, max 3
+            player.health = Math.min(player.health + 1, 3);
             break;
 
         case POWERUP_TYPES.MAX_HEALTH:
-            player.health = 4; // New max health
+            player.health = 4;
             break;
 
         case POWERUP_TYPES.TIME_STOP:
             isTimeStopped = true;
-            timeStopEnd = Date.now() + 3000; // 3 seconds
+            timeStopEnd = Date.now() + 3000;
             setTimeout(() => {
                 isTimeStopped = false;
             }, 3000);
@@ -1707,14 +1621,14 @@ function applyPowerUp(powerUp) {
     }
 }
 function spawnWoodBlocks() {
-    const blockWidth = 40; // Width of each wood block
-    const blockHeight = 20; // Height of each wood block
-    const y = canvas.height / 2 - 10; // Y position for the line of blocks (middle of the screen)
+    const blockWidth = 40;
+    const blockHeight = 20;
+    const y = canvas.height / 2 - 10;
 
     // Clear any existing blocks before spawning new ones
     leafBlocks = [];
 
-    // Spawn a consecutive line of wood blocks
+    // Spawn line of wood
     for (let x = 100; x < canvas.width - 100; x += blockWidth) {
         leafBlocks.push(new LeafBlock(x, y, blockWidth, blockHeight, "wood"));
     }
@@ -1732,8 +1646,8 @@ function spawnStoneBlocks() {
     }
 }
 
-let zombie = null; // Only one zombie at a time
-const minDistanceFromPlayer = 100; // Minimum distance from the player
+let zombie = null;
+const minDistanceFromPlayer = 100;
 function spawnBoss() {
     boss = {
         x: canvas.width / 2 - BOSS_WIDTH / 2,
@@ -1745,19 +1659,18 @@ function spawnBoss() {
         maxHealth: levels[currentLevel].bossHealth,
         isHovering: false,
         nextShotTime: 0,
-        fireballRate: 1500 // Shoots every 1.5 seconds
+        fireballRate: 1500
     };
 
-    // Spawn wood platform arena
     blocks = [
-        new LeafBlock(200, 400, 400, 30, "wood") // Main platform
+        new LeafBlock(200, 400, 400, 30, "wood")
     ];
 }
 
 function drawBoss() {
     if (!boss) return;
 
-    // Draw boss dragon (using your existing dragonImg but scaled up)
+    // Draw boss dragon
     ctx.drawImage(dragonImg, boss.x, boss.y, boss.width, boss.height);
 
     // Draw health bar
@@ -1785,7 +1698,7 @@ function updateBoss() {
     // Movement pattern
     boss.x += boss.speed;
     if (boss.x <= 0 || boss.x + boss.width >= canvas.width) {
-        boss.speed *= -1; // Reverse direction at edges
+        boss.speed *= -1;
     }
 
     // Shooting logic
@@ -1793,8 +1706,8 @@ function updateBoss() {
         fireballs.push({
             x: boss.x + boss.width / 2,
             y: boss.y + boss.height,
-            speedX: (Math.random() - 0.5) * 2, // Some horizontal spread
-            speedY: 3 // Faster fireballs
+            speedX: (Math.random() - 0.5) * 2,
+            speedY: 3
         });
         boss.nextShotTime = Date.now() + boss.fireballRate;
     }
@@ -1826,25 +1739,20 @@ function checkBossHit() {
         }
     });
 }
-// ========================
-// PLAYER SPAWN CONTROLLER
-// ========================
 
+// PLAYER SPAWN CONTROLLER
 const playerSpawn = {
-    // Initialize spawn system
     init() {
         this.calculateSpawnPosition();
         window.addEventListener('resize', () => this.calculateSpawnPosition());
     },
-
-    // Calculate proper spawn position relative to floor
+    
     calculateSpawnPosition() {
         this.x = canvas.width / 2 - player.width / 2;
         this.y = floor.y - player.height;
         console.log("Calculated spawn position:", { x: this.x, y: this.y });
     },
 
-    // Spawn the player (call this whenever needed)
     spawn() {
         player.x = this.x;
         player.y = this.y;
@@ -1858,17 +1766,14 @@ const playerSpawn = {
             canvasHeight: canvas.height
         });
 
-        // DEBUG: Visual spawn marker
         this.drawSpawnMarker();
     },
 
-    // Visual debug helper
+    // debug helper
     drawSpawnMarker() {
-        // This will show a temporary marker at spawn point
         ctx.fillStyle = "rgba(0,255,0,0.5)";
         ctx.fillRect(player.x, player.y, player.width, player.height);
         setTimeout(() => {
-            // Marker will disappear after 1 second
             if (player.x === this.x && player.y === this.y) {
                 ctx.clearRect(player.x, player.y, player.width, player.height);
             }
@@ -1885,7 +1790,7 @@ function spawnZombie() {
 
     do {
         x = Math.random() * (canvas.width - 40);
-        y = floor.y - 60; // Spawn above floor
+        y = floor.y - 60;
     } while (Math.abs(x - player.x) < minDistanceFromPlayer);
 
     zombie = new Zombie(x, y, 40, 60);
@@ -1896,7 +1801,7 @@ function spawnSpider() {
     if (spiders.length > 0 || currentLevel < 3) return;
     const side = Math.random() < 0.5 ? "left" : "right";
     const x = side === "left" ? -60 : canvas.width + 60;
-    const y = floor.y - 80; // Spawn above floor
+    const y = floor.y - 80;
     const spiderWidth = 50 * 1.75;
     const spiderHeight = 50 * 1.75;
     spiders.push({
@@ -1920,9 +1825,9 @@ function spawnWave() {
         setTimeout(() => {
             const side = Math.random() < 0.5 ? "left" : "right";
             const x = side === "left" ? -100 : canvas.width + 100;
-            const y = Math.random() * (canvas.height / 3); // Spawn in the top third of the screen
-            const dragonWidth = 200; // Increased from 120 to 180 (1.5x)
-            const dragonHeight = 160; // Increased from 80 to 120 (1.5x)
+            const y = Math.random() * (canvas.height / 3);
+            const dragonWidth = 200;
+            const dragonHeight = 160;
             dragons.push({
                 x,
                 y,
@@ -1932,7 +1837,7 @@ function spawnWave() {
                 isHovering: false,
                 originalSpeed: 0.3,
                 hoverEndTime: 0,
-                hasFiredBeam: false  // Add this new property
+                hasFiredBeam: false
             });
         }, i * 500);
     }
@@ -1940,20 +1845,17 @@ function spawnWave() {
     enemiesRemaining = enemiesToSpawn;
 }
 
-// Spawn fireballs from dragons
 function spawnFireball(dragon) {
     fireballs.push(new Fireball(
         dragon.x + dragon.width / 2,
         dragon.y + dragon.height,
-        0,  // speedX (adjust as needed)
-        2   // speedY (adjust as needed)
+        0, //speed stuff
+        2
     ));
 }
 
-// Start spawning spiders at intervals
 setInterval(spawnSpider, spiderSpawnInterval);
 
-// Spawn fireballs from dragons every 2 seconds
 setInterval(() => {
     dragons.forEach((dragon) => {
         spawnFireball(dragon);
@@ -1974,11 +1876,11 @@ function showLevelCompleteScreen() {
         overlay.style.display = "none";
         currentLevel++;
         if (currentLevel < levels.length) {
-            loadLevel(currentLevel); // Load the next level
-            resetPlayer(); // Reset player position and health
-            spawnLeafBlocks(levels[currentLevel].leafBlockType); // Spawn new leaf blocks
+            loadLevel(currentLevel);
+            resetPlayer();
+            spawnLeafBlocks(levels[currentLevel].leafBlockType);
             isGameOver = false;
-            gameLoop(); // Restart the game loop
+            gameLoop();
         } else {
             alert("You've completed all levels!");
         }
@@ -1986,7 +1888,6 @@ function showLevelCompleteScreen() {
 }
 
 function resetGame() {
-    // Reset game variables
     dragons = [];
     spiders = [];
     fireballs = [];
@@ -1995,21 +1896,18 @@ function resetGame() {
     zombie = null;
     boss = null;
 
-    // Reset player position and health
     player.x = canvas.width / 2 - player.width / 2;
-    player.y = floor.y - player.height; // Spawn on floor
+    player.y = floor.y - player.height;
     player.health = 3;
     player.ammo = player.maxAmmo;
     powerUps = [];
     isTimeStopped = false;
-    player.reset(); // Use new reset method
+    player.reset();
 
-    // Reset level-specific variables
     dragonsKilled = 0;
     isGameOver = false;
     dragonWavePending = false;
 
-    // Load the level blocks
     const level = levels[currentLevel];
     switch (level.blockType) {
         case "leaf":
@@ -2024,8 +1922,6 @@ function resetGame() {
         default:
             spawnLeafBlocks();
     }
-
-    // Start the first wave
     spawnWave();
 }
 
@@ -2041,11 +1937,10 @@ function resetPlayer() {
     player.health = 3;
 }
 
-// End game
 function endGame(isWin = false, isFinalLevel = false) {
     isGameOver = true;
     if (isWin) {
-        showLevelCompleteScreen(); // Show the level complete screen
+        showLevelCompleteScreen();
         saveProgress(currentLevel);
     } else {
         const overlay = document.getElementById("overlay");
@@ -2069,7 +1964,7 @@ function endGame(isWin = false, isFinalLevel = false) {
 
 function startFreeplay() {
     resetGameState();
-    playerSpawn.spawn(); // Unified spawn call
+    playerSpawn.spawn();
     spawnLeafBlocks();
     spawnWave();
     gameLoop();
@@ -2094,8 +1989,8 @@ function loadLevel(levelIndex) {
     // Special boss level setup
     if (level.isBossLevel) {
         spawnBoss();
-        spawnWoodBlocks(); // Spawn wood platform arena
-        return; // Skip normal level setup
+        spawnWoodBlocks();
+        return;
     }
 
     // Normal level setup
@@ -2113,7 +2008,7 @@ function loadLevel(levelIndex) {
 
 function loadLevelButtons() {
     const levelButtonsContainer = document.getElementById("levelButtons");
-    levelButtonsContainer.innerHTML = ""; // Clear existing buttons
+    levelButtonsContainer.innerHTML = "";
 
     levels.forEach((level, index) => {
         const button = document.createElement("button");
@@ -2162,7 +2057,7 @@ document.getElementById("resetButton").addEventListener("click", () => {
 document.getElementById("loadingButton").addEventListener("click", () => {
     document.getElementById("mainMenu").style.display = "none";
     document.getElementById("loadingScreen").style.display = "flex";
-    loadLevelButtons(); // Load level buttons dynamically
+    loadLevelButtons();
 });
 
 document.getElementById("backButton").addEventListener("click", () => {
@@ -2171,7 +2066,6 @@ document.getElementById("backButton").addEventListener("click", () => {
 });
 
 function setupEventListeners() {
-    // Event listener for mouse movement (aiming)
     canvas.addEventListener("mousemove", (e) => {
         const rect = canvas.getBoundingClientRect();
         mouseX = e.clientX - rect.left;
@@ -2182,7 +2076,6 @@ function setupEventListeners() {
         player.arrowAngle = Math.atan2(mouseY - playerCenterY, mouseX - playerCenterX);
     });
 
-    // Event listener for mouse clicks (shooting)
     canvas.addEventListener("mousedown", (e) => {
         if (e.button === 0 && !player.isSwordAttacking) {
             player.shoot();
@@ -2197,7 +2090,7 @@ function setupEventListeners() {
     function handleMovement() {
         if (isPlayerSnared) return;
     }
-    // Event listener for keyboard input (movement and actions)
+    
     document.addEventListener("keydown", (e) => {
         const key = e.key.toLowerCase();
         if (key === "a") {
@@ -2211,44 +2104,38 @@ function setupEventListeners() {
         } else if (key === "f") {
             player.attackSword();
         } else if (e.code === "Space") {
-            e.preventDefault(); // Prevent spacebar from scrolling the page
+            e.preventDefault();
             player.jump();
         }
     });
 }
 
-// Wait for the DOM to load
 document.addEventListener("DOMContentLoaded", () => {
     const mainMenu = document.getElementById("mainMenu");
     const freeplayButton = document.getElementById("freeplayButton");
     const storyButton = document.getElementById("storyButton");
 
-    // Freeplay button: Start the game as is
     freeplayButton.addEventListener("click", () => {
-        mainMenu.style.display = "none"; // Hide the main menu
-        startGame("freeplay"); // Start freeplay mode
+        mainMenu.style.display = "none";
+        startGame("freeplay");
     });
 
-    // Story button: Start the tutorial levels
     storyButton.addEventListener("click", () => {
-        mainMenu.style.display = "none"; // Hide the main menu
-        startGame("story"); // Start story mode
+        mainMenu.style.display = "none";
+        startGame("story");
     });
 });
 
 function startGame(mode) {
-    // Initialize game variables
     currentLevel = 0;
     dragonsKilled = 0;
     isGameOver = false;
     dragonWavePending = false;
 
-    // Reset player position and health
     player.x = canvas.width / 2 - 25;
     player.y = canvas.height - 100;
     player.health = 3;
 
-    // Clear existing game entities
     dragons = [];
     spiders = [];
     fireballs = [];
@@ -2256,10 +2143,9 @@ function startGame(mode) {
     leafBlocks = [];
     zombies = [];
 
-    // Add event listeners for player movement
-    setupEventListeners();
 
-    // Start the game based on the selected mode
+    setupEventListeners();
+    
     if (mode === "freeplay") {
         startFreeplay();
     } else if (mode === "story") {
@@ -2268,11 +2154,8 @@ function startGame(mode) {
 }
 
 function startFreeplay() {
-    // Spawn all features and enemies at once
-    spawnLeafBlocks("strong"); // Strong leaf blocks
-    spawnWave(3, 5); // Example: 3 waves of 5 dragons
-
-    // Enable spiders and zombies in Freeplay mode
+    spawnLeafBlocks("strong");
+    spawnWave(3, 5);
     setInterval(spawnSpider, spiderSpawnInterval);
     setInterval(spawnZombie, 5000);
     playerSpawn.spawn();
@@ -2281,13 +2164,11 @@ function startFreeplay() {
 }
 
 function startStory() {
-    // Disable spiders and zombies in Story mode
     clearInterval(spawnSpider);
     clearInterval(spawnZombie);
 
-    playerSpawn.spawn(); // Unified spawn call
+    playerSpawn.spawn();
 
-    // Start with the tutorial level
     loadLevel(currentLevel);
     gameLoop();
 }
@@ -2308,7 +2189,7 @@ function startStory() {
 
 function showTutorial(text) {
     const tutorialDiv = document.getElementById("tutorial");
-    tutorialDiv.innerHTML = text.replace(/\n/g, "<br>"); // Replace newlines with <br>
+    tutorialDiv.innerHTML = text.replace(/\n/g, "<br>");
     tutorialDiv.style.display = "block";
 }
 
@@ -2320,13 +2201,12 @@ function hideTutorial() {
 function loadLevel(levelIndex) {
     const level = levels[levelIndex];
 
-    // Clear existing game entities
     dragons = [];
     fireballs = [];
     projectiles = [];
     leafBlocks = [];
 
-    // Reset dragons killed counter
+    // Reset counter
     dragonsKilled = 0;
     updateDragonsKilledCounter();
 
@@ -2340,28 +2220,25 @@ function loadLevel(levelIndex) {
     if (levelIndex === 0) {
         showTutorial(level.description);
     } else {
-        hideTutorial(); // Hide tutorial for other levels
+        hideTutorial();
     }
 
-    // Update the dragons to kill counter
     document.getElementById("dragonsToKillValue").textContent = level.dragonsToKill;
 
-    // Spawn blocks based on level
     switch (levelIndex) {
-        case 0: // Level 1: Leafs
+        case 0:
             spawnLeafBlocks();
             break;
-        case 1: // Level 2: Wood
+        case 1:
             spawnWoodBlocks();
             break;
-        case 2: // Level 3: Leafs (random generation)
+        case 2:
             spawnLeafBlocks();
             break;
         default:
-            spawnLeafBlocks(); // Default to leafs
+            spawnLeafBlocks();
     }
 
-    // Start the first wave
     gameLoop();
     spawnWave(level.waves, level.enemiesPerWave);
 }
@@ -2373,40 +2250,37 @@ function updateDragonsKilledCounter() {
 
 
 function spawnLeafBlocks(toughness = "strong") {
-    const tree = new Tree("Oak"); // Example: Spawn an Oak tree
-    const middleRowY = canvas.height / 2 - 10; // Middle of the screen
-    const blockWidth = tree.thickness; // Use tree thickness for block width
-    const blockHeight = 20; // Fixed height for simplicity
-    const minGap = tree.nodeDistance; // Use tree node distance for gaps
-    const maxGap = tree.nodeDistance + 20; // Add some variation
-    const yVariation = tree.height / 2; // Use tree height for vertical spread
+    const tree = new Tree("Oak");
+    const middleRowY = canvas.height / 2 - 10;
+    const blockWidth = tree.thickness;
+    const blockHeight = 20;
+    const minGap = tree.nodeDistance;
+    const maxGap = tree.nodeDistance + 20;
+    const yVariation = tree.height / 2;
 
-    const clearingWidth = 100; // Width of the clearings on the left and right
-    let x = clearingWidth; // Start from the left edge of the spawning area
+    const clearingWidth = 100;
+    let x = clearingWidth;
 
-    const totalColumns = 10; // Decrease the number of columns
+    const totalColumns = 10;
 
     for (let col = 0; col < totalColumns; col++) {
-        // Add a random gap between columns
         const gap = Math.random() * (maxGap - minGap) + minGap;
         x += gap;
 
-        // Spawn a column if it fits within the spawning area
         if (x + blockWidth <= canvas.width - clearingWidth) {
-            const y = middleRowY + (Math.random() * yVariation - yVariation / 2); // Randomize Y position
-            const numLeaves = Math.floor(Math.random() * 6) + 3; // Random number of leaves (3-8)
-
-            // Spawn leaf blocks in a circular pattern around the center node
+            const y = middleRowY + (Math.random() * yVariation - yVariation / 2);
+            const numLeaves = Math.floor(Math.random() * 6) + 3; 
+            
             for (let i = 0; i < numLeaves; i++) {
-                const angle = (Math.PI * 2 * i) / numLeaves; // Evenly distribute leaves in a circle
-                const radius = 40; // Increase radius for a bushier look
+                const angle = (Math.PI * 2 * i) / numLeaves;
+                const radius = 40;
                 const leafX = x + Math.cos(angle) * radius;
                 const leafY = y + Math.sin(angle) * radius;
 
                 leafBlocks.push(new LeafBlock(leafX, leafY, blockWidth, blockHeight, toughness));
             }
 
-            x += blockWidth; // Move to the end of the current column
+            x += blockWidth;
         }
     }
 }
@@ -2417,7 +2291,7 @@ function spawnWave(waves, enemiesPerWave) {
                 setTimeout(() => {
                     const side = Math.random() < 0.5 ? "left" : "right";
                     const x = side === "left" ? -100 : canvas.width + 100;
-                    const y = Math.random() * (canvas.height / 3); // Spawn in the top third of the screen
+                    const y = Math.random() * (canvas.height / 3);
                     const dragonWidth = 120;
                     const dragonHeight = 80;
                     dragons.push({
@@ -2427,12 +2301,9 @@ function spawnWave(waves, enemiesPerWave) {
                         height: dragonHeight,
                         speed: 0.3,
                     });
-                }, i * 500); // Stagger dragon spawns
+                }, i * 500);
             }
-        }, wave * 10000); // 10-second delay between waves
+        }, wave * 10000);
     }
 }
-// Start the game loop
-//spawnWave();
-//gameLoop();
-//spawnLeafBlocks();" "/* style.css */
+
